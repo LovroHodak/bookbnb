@@ -7,8 +7,8 @@ const getAirnbnb = require('./airbnb')
 const getOneBnb = require('./onebnb')
 
 
-getBookings()
-//getAirnbnb()
+//getBookings()
+getAirnbnb()
 //getOneBnb()
 
 

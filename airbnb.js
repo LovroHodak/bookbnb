@@ -22,19 +22,25 @@ async function getAirbnb() {
   );
   await page.click("div[data-testid=datepicker-day-2021-12-20]");
   await page.click("div[data-testid=datepicker-day-2021-12-22]");
-  await page.click("div._w64aej");
+
+  /* await page.click("div._w64aej"); */
+
+  await page.evaluate(() => {
+    const buttons = [...document.querySelectorAll("form button:not([id])")];
+    buttons[buttons.length - 1].click();
+  });
 
   // RESULTS 1
-  await page.waitForSelector("span.t16jmdcf.t5nhi1p.t174r01n.dir.dir-ltr");
+  await page.waitForSelector("span[id^='title']");
 
-  const ponudbe = await page.evaluate(async () => {
-    let list = document.querySelectorAll("div._8ssblpx");
+  const getPonudbe = () => {
+    let list = document.querySelectorAll("[itemprop=itemListElement]");
     return [...list].map((el) => ({
-      title: el.querySelector("span.t16jmdcf.t5nhi1p.t174r01n.dir.dir-ltr").textContent,
+      title: el.querySelector("span[id^='title']").textContent,
     }));
-    /* let oneItem = document.querySelector("span.t16jmdcf.t5nhi1p.t174r01n.dir.dir-ltr").textContent
-        return oneItem */
-  });
+  };
+
+  const ponudbe = await page.evaluate(getPonudbe);
   console.log(ponudbe);
   console.log(ponudbe.length);
 
@@ -42,12 +48,15 @@ async function getAirbnb() {
   await page.click(
     "div[data-testid=filterItem-room_type-checkbox-room_types-Private_room]"
   );
-  const clickPromise = page.click("button[data-testid=filter-panel-save-button]");
-  console.log(clickPromise)
-  await clickPromise
+  const clickPromise = page.click(
+    "button[data-testid=filter-panel-save-button]"
+  );
+  console.log(clickPromise);
+  await clickPromise;
 
-  const delay = (time) => new Promise(resolve => setTimeout(() => resolve(), time))
-  await delay(5000)
+  const delay = (time) =>
+    new Promise((resolve) => setTimeout(() => resolve(), time));
+  await delay(5000);
 
   // THIS WORKS BUT IT HASNT LOADED NEW DATA YET
   /* await page.waitForFunction(async () => {
@@ -57,12 +66,7 @@ async function getAirbnb() {
   console.log("done"); */
 
   // RESULTS 2
-  const samoSoba = await page.evaluate(async () => {
-    let list = document.querySelectorAll("div._8ssblpx");
-    return [...list].map((el) => ({
-      title: el.querySelector("span.t16jmdcf.t5nhi1p.t174r01n.dir.dir-ltr")?.textContent,
-    }));
-  });
+  const samoSoba = await page.evaluate(getPonudbe);
 
   console.log(samoSoba);
   console.log(samoSoba.length);
